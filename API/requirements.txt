@@ -1,8 +1,0 @@
-fastapi
-uvicorn
-google-cloud-storage
-pandas
-scikit-learn
-streamlit
-altair==4.2.0
-matplotlib
