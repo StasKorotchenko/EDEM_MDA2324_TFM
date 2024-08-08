@@ -1,0 +1,7 @@
+pandas
+google-cloud-bigquery
+google-cloud-bigquery-storage
+google-cloud-storage
+scikit-learn
+joblib
+db-dtypes
