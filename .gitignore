@@ -6,3 +6,4 @@
 *.pyc
 /API + STREAMLIT/venv
 /CLOUD RUN/tfm-edem-4bb10bc4ec8e.json
+/CLOUD RUN 2/tfm-edem-4bb10bc4ec8e.json

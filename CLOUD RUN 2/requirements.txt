@@ -1,0 +1,6 @@
+pandas
+prophet
+google-cloud-bigquery
+google-cloud-storage
+numpy==1.21.0
+db-dtypes

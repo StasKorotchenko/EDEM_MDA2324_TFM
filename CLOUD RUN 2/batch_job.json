@@ -1,0 +1,36 @@
+{
+    "taskGroups": [
+      {
+        "taskSpec": {
+          "runnables": [
+            {
+              "container": {
+                "imageUri": "gcr.io/tfm-edem/imagen-demanda",
+                "entrypoint": "/bin/bash",
+                "commands": ["-c", "python app.py"]
+              }
+            }
+          ],
+          "computeResource": {
+            "cpuMilli": 1000,
+            "memoryMib": 1024
+          },
+          "maxRunDuration": "3600s"
+        },
+        "taskCount": 1
+      }
+    ],
+    "allocationPolicy": {
+      "instances": [
+        {
+          "policy": {
+            "machineType": "e2-medium"
+          }
+        }
+      ]
+    },
+    "logsPolicy": {
+      "destination": "CLOUD_LOGGING"
+    }
+  }
+  
