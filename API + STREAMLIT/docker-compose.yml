@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  fastapi:
+    build:
+      context: .
+      dockerfile: Dockerfile.fastapi
+    ports:
+      - "8000:8000"
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/tfm-edem-54bbbe821339.json
+    volumes:
+      - /Users/korotchenkostanislav/Documents/EDEM/TFM/tfm-edem-54bbbe821339.json:/app/tfm-edem-54bbbe821339.json
+
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile.streamlit
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app

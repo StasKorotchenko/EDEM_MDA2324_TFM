@@ -2,7 +2,8 @@ fastapi
 uvicorn
 google-cloud-storage
 pandas
-numpy==1.23.5
+numpy
+#==1.23.5
 streamlit
 altair==4.2.0
 matplotlib

@@ -10,13 +10,14 @@ import joblib
 import yaml
 import io
 
-
 app = FastAPI()
 
 # Конфигурация Google Cloud Storage и BigQuery
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/korotchenkostanislav/Documents/EDEM/TFM/tfm-edem-54bbbe821339.json"
+#os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/korotchenkostanislav/Documents/EDEM/TFM/tfm-edem-54bbbe821339.json"
+#os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/app/tfm-edem-54bbbe821339.json"
 bucket_name = "bucket_for_model_tfm"
 kmeans_model_filename = "clusterizacion_clientes_model.pkl"
+scaler_filename = "clusterizacion_clientes_modelscaler.pkl"  # Файл с scaler'ом
 prophet_model_filename = "prophet_model.pkl"
 
 project_id = "tfm-edem"
@@ -42,8 +43,9 @@ def load_model_from_gcp(model_filename, is_joblib=False):
     print(f"Loaded model type: {type(model)}")  # Отладочный вывод
     return model
 
-# Загрузка моделей из GCP
+# Загрузка моделей и scaler'а из GCP
 kmeans_model = load_model_from_gcp(kmeans_model_filename, is_joblib=False)
+scaler = load_model_from_gcp(scaler_filename, is_joblib=False)
 prophet_model = load_model_from_gcp(prophet_model_filename, is_joblib=True)
 
 # Загрузка схемы из YAML-файла
@@ -119,8 +121,11 @@ def predict(data: ClusterInputData):
         # Преобразование входных данных в DataFrame
         input_df = pd.DataFrame([data.dict()])
         
+        # Масштабирование данных с использованием scaler'а
+        scaled_input_df = scaler.transform(input_df)
+        
         # Получение предсказания
-        prediction = kmeans_model.predict(input_df)[0]
+        prediction = kmeans_model.predict(scaled_input_df)[0]
         
         # Преобразуем prediction в стандартный Python тип (int)
         if isinstance(prediction, (np.integer, np.int32, np.int64)):
@@ -177,4 +182,3 @@ def demand_predict(data: DemandInputData):
         return {"forecast": results}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
-
