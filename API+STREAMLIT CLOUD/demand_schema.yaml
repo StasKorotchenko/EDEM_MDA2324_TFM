@@ -1,0 +1,15 @@
+- name: ds
+  type: DATE
+  mode: REQUIRED
+- name: yhat
+  type: FLOAT64
+  mode: REQUIRED
+- name: yhat_lower
+  type: FLOAT64
+  mode: REQUIRED
+- name: yhat_upper
+  type: FLOAT64
+  mode: REQUIRED
+- name: timestamp
+  type: TIMESTAMP
+  mode: REQUIRED

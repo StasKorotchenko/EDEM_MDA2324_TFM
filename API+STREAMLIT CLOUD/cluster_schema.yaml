@@ -1,0 +1,17 @@
+# Schema for BigQuery Table
+- name: total_spent
+  type: FLOAT
+- name: purchase_frequency
+  type: FLOAT
+- name: average_order_value
+  type: FLOAT
+- name: num_reviews
+  type: INTEGER
+- name: avg_review_score
+  type: FLOAT
+- name: days_since_last_purchase
+  type: FLOAT
+- name: prediction_result
+  type: STRING
+- name: timestamp
+  type: TIMESTAMP

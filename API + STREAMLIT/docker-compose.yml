@@ -5,6 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.fastapi
+    image: gcr.io/tfm-edem/fastapi-app:latest
     ports:
       - "8000:8000"
     environment:
@@ -17,6 +18,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.streamlit
+    image: gcr.io/tfm-edem/streamlit-app:latest
     ports:
       - "8501:8501"
     volumes:
