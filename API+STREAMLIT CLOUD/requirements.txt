@@ -11,4 +11,5 @@ google-cloud-bigquery
 pyyaml
 prophet
 scikit-learn==1.3.2 
+plotly
 
