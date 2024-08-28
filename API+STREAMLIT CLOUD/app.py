@@ -2,16 +2,26 @@ import streamlit as st
 import requests
 import pandas as pd
 import plotly.graph_objs as go
+from datetime import datetime
 
 st.set_page_config(page_title="Customer Prediction App", page_icon=":chart_with_upwards_trend:")
 
-# Estilo CSS personalizado
+# Custom CSS styling
 st.markdown(
     """
     <style>
     .stButton>button {
         background-color: #4CAF50;
         color: white;
+        border: none; /* Remove border */
+        transition: color 0.3s;
+        font-size: 16px;
+        padding: 10px 20px;
+    }
+    .stButton>button:hover, .stButton>button:active {
+        background-color: #4CAF50; /* Maintain green background */
+        color: white; /* Maintain white text */
+        border: none; /* Remove border */
     }
     .low-demand {
         background-color: #E0FFFF;
@@ -58,7 +68,7 @@ elif page == "Cluster Prediction":
 
             try:
                 # Send the POST request
-                response = requests.post("https://fastapi-app-v47hoksqvq-no.a.run.app//predict", json=data)
+                response = requests.post("https://fastapi-app-v47hoksqvq-no.a.run.app/predict", json=data)
                 
                 if response.status_code == 200:
                     prediction = response.json().get("prediction", "Unknown")
@@ -68,17 +78,19 @@ elif page == "Cluster Prediction":
             except requests.exceptions.RequestException as e:
                 st.error(f"Request failed: {str(e)}")
 elif page == "Demand Prediction":
-    st.write("Enter the number of days to get a demand prediction.")
+    st.write("Enter the number of days and optionally the start date to get a demand prediction.")
     
-    # UI for days input
+    # UI for days and start date input
     days = st.number_input('Number of Days for Prediction', min_value=1, format="%d")
-
+    start_date = st.date_input("Select Start Date", value=datetime.today())
+    
     # If the Predict button is pressed
     if st.button("Predict Demand"):
         with st.spinner("Processing data... Please wait."):
             # Prepare the data for the POST request
             data = {
-                "days": int(days)  # Преобразование дней в целое число
+                "days": int(days),
+                "start_date": start_date.strftime("%Y-%m-%d")  # Convert date to string
             }
 
             try:
@@ -88,78 +100,79 @@ elif page == "Demand Prediction":
                 if response.status_code == 200:
                     forecast = response.json().get("forecast", [])
                     
-                    # Преобразуем данные в DataFrame для отображения
+                    # Convert data to DataFrame for display
                     if forecast:
                         df = pd.DataFrame(forecast)
-                        df['ds'] = pd.to_datetime(df['ds']).dt.date  # Только дата без времени
-                        df = df[['ds', 'yhat', 'yhat_lower', 'yhat_upper']]
+                        df['ds'] = pd.to_datetime(df['ds'])
+                        df['Date'] = df['ds'].dt.strftime('%Y-%m-%d (%A)')  # Date with weekday
+                        df = df[['Date', 'yhat', 'yhat_lower', 'yhat_upper']]
                         
-                        # Округляем значения до двух знаков после запятой
+                        # Round values to two decimal places
                         df['yhat'] = df['yhat'].round(2)
                         df['yhat_lower'] = df['yhat_lower'].round(2)
                         df['yhat_upper'] = df['yhat_upper'].round(2)
 
                         df.rename(columns={
-                            'ds': 'Date',
                             'yhat': 'Predicted Demand',
                             'yhat_lower': 'Lower Bound',
                             'yhat_upper': 'Upper Bound'
                         }, inplace=True)
 
-                        # Форматирование значений в таблице
+                        # Formatting values in the table
                         def format_values(x):
                             return f"{x:.2f}"
 
-                        # Построение графика с использованием Plotly
+                        # Create the Plotly graph
                         fig = go.Figure()
 
-                        # Линия прогноза
+                        # Forecast line with markers
                         fig.add_trace(go.Scatter(
                             x=df['Date'], 
                             y=df['Predicted Demand'], 
-                            mode='lines', 
-                            name='Forecast',
-                            line=dict(color='blue')
+                            mode='lines+markers', 
+                            name='Demand',
+                            line=dict(color='blue'),
+                            marker=dict(size=8)
                         ))
 
-                        # Заполнение области между yhat_lower и yhat_upper
+                        # Fill area between yhat_lower and yhat_upper
                         fig.add_trace(go.Scatter(
                             x=df['Date'].tolist() + df['Date'].tolist()[::-1],
                             y=df['Upper Bound'].tolist() + df['Lower Bound'].tolist()[::-1],
                             fill='toself',
-                            fillcolor='rgba(173, 216, 230, 0.2)',  # Светло-голубой цвет
+                            fillcolor='rgba(173, 216, 230, 0.2)',  # Light blue color
                             line=dict(color='rgba(255,255,255,0)'),
                             hoverinfo="skip",
                             showlegend=False
                         ))
 
-                        # Настройка осей и оформления
+                        # Layout configuration
                         fig.update_layout(
                             title='Demand Forecast',
                             yaxis_title='Demand',
-                            xaxis_title='',  # Убираем подпись оси X
+                            xaxis_title='',  # Remove X-axis label
                             hovermode='x',
                             template='plotly_white'
                         )
 
-                        # Отображение графика
+                        # Display the graph
                         st.plotly_chart(fig)
 
-                        # Подсветка экстремальных значений в таблице
+                        # Highlight extremes in the table
                         def highlight_extremes(row):
                             styles = []
                             for value in row:
                                 if value == df['Predicted Demand'].max():
-                                    styles.append('background-color: #FFCCCB')  # Светло-красный
+                                    styles.append('background-color: #FFCCCB')  # Light red
                                 elif value == df['Predicted Demand'].min():
-                                    styles.append('background-color: #E0FFFF')  # Светло-синий
+                                    styles.append('background-color: #E0FFFF')  # Light blue
                                 else:
                                     styles.append('')
                             return styles
 
-                        # Отображение таблицы с форматированием значений
+                        # Display the DataFrame with formatting
                         st.write("Demand prediction:")
-                        st.dataframe(df.style.apply(highlight_extremes, axis=1, subset=['Predicted Demand', 'Lower Bound', 'Upper Bound'])
+                        st.dataframe(df.style.apply(highlight_extremes, axis=1)
                                           .format(formatter={'Predicted Demand': format_values,
                                                               'Lower Bound': format_values,
                                                               'Upper Bound': format_values}))
