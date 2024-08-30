@@ -1,0 +1,222 @@
+- name: customers
+  size: large
+  format: CSV
+  columns: 
+    - "customer_id"
+    - "customer_unique_id"
+    - "postal_code"
+  schema: 
+    - name: "customer_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "customer_unique_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "postal_code"
+      type: "STRING"
+      mode: "NULLABLE"
+
+
+- name: geolocalizaciones
+  size: large
+  format: CSV
+  columns: 
+    - "CLIENTE_ISO_CODE"
+    - "CITY"
+    - "ZIPCODE"
+    - "LONGITUDE"
+    - "LATITUDE"
+    - "ID_CP"
+  schema: 
+    - name: "CLIENTE_ISO_CODE"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "CITY"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "ZIPCODE"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "LONGITUDE"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "LATITUDE"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "ID_CP"
+      type: "STRING"
+      mode: "NULLABLE"
+
+
+- name: order_items
+  size: large
+  format: CSV
+  columns: 
+    - "order_id"
+    - "product_id"
+    - "seller_id"
+    - "shipping_limit_date"
+    - "price"
+    - "freight_value"
+  schema: 
+    - name: "order_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "product_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "seller_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "shipping_limit_date"
+      type: "TIMESTAMP"
+      mode: "NULLABLE"
+    - name: "price"
+      type: "FLOAT"
+      mode: "NULLABLE"
+    - name: "freight_value"
+      type: "FLOAT"
+      mode: "NULLABLE"
+
+
+- name: order_payments
+  size: large
+  format: CSV
+  columns: 
+    - "order_id"
+    - "sequential"
+    - "payment_type"
+    - "installments"
+    - "amount"
+  schema: 
+    - name: "order_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "sequential"
+      type: "INTEGER"
+      mode: "NULLABLE"
+    - name: "payment_type"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "installments"
+      type: "INTEGER"
+      mode: "NULLABLE"
+    - name: "amount"
+      type: "FLOAT"
+      mode: "NULLABLE"
+
+
+- name: orders
+  size: large
+  format: CSV
+  columns: 
+    - "order_id"
+    - "customer_id"
+    - "status"
+    - "purchase_timestamp"
+    - "approved_at"
+    - "delivered_courier_date"
+    - "delivered_customer_date"
+    - "estimated_delivery_date"
+  schema: 
+    - name: "order_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "customer_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "status"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "purchase_timestamp"
+      type: "TIMESTAMP"
+      mode: "NULLABLE"
+    - name: "approved_at"
+      type: "TIMESTAMP"
+      mode: "NULLABLE"
+    - name: "delivered_courier_date"
+      type: "TIMESTAMP"
+      mode: "NULLABLE"
+    - name: "delivered_customer_date"
+      type: "TIMESTAMP"
+      mode: "NULLABLE"
+    - name: "estimated_delivery_date"
+      type: "DATE"
+      mode: "NULLABLE"
+
+      
+- name: products
+  size: large
+  format: CSV
+  columns:
+    - "product_id"
+    - "category_name"
+    - "weight_g"
+    - "length_cm"
+    - "height_cm"
+    - "width_cm"
+  schema:
+    - name: "product_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "category_name"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "weight_g"
+      type: "FLOAT"
+      mode: "NULLABLE"
+    - name: "length_cm"
+      type: "FLOAT"
+      mode: "NULLABLE"
+    - name: "height_cm"
+      type: "FLOAT"
+      mode: "NULLABLE"
+    - name: "width_cm"
+      type: "FLOAT"
+      mode: "NULLABLE"
+
+
+- name: reviews
+  size: large
+  format: CSV
+  columns: 
+    - "review_id"
+    - "order_id"
+    - "score"
+    - "has_comment"
+    - "review_creation_date"
+    - "review_answer_timestamp"
+  schema: 
+    - name: "review_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "order_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "score"
+      type: "INTEGER"
+      mode: "NULLABLE"
+    - name: "has_comment"
+      type: "INTEGER"
+      mode: "NULLABLE"
+    - name: "review_creation_date"
+      type: "TIMESTAMP" 
+      mode: "NULLABLE"
+    - name: "review_answer_timestamp"
+      type: "TIMESTAMP" 
+      mode: "NULLABLE"
+
+
+- name: sellers
+  size: large
+  format: CSV
+  columns: 
+    - "seller_id"
+    - "postal_code"
+  schema: 
+    - name: "seller_id"
+      type: "STRING"
+      mode: "NULLABLE"
+    - name: "postal_code"
+      type: "STRING"
+      mode: "NULLABLE"

@@ -1,0 +1,5 @@
+-El schema.yaml es el archivo que explica como están formados los csv, el nombre de la columna y que tipo de datos contiene.
+
+- El main.py es el script que realiza la carga de CSV desde el bucket a bigquery realizando las transformaciones definidas en este.
+
+- Los requriments.txt son los que permiten la carga de datos desde el bucket hasta bigquery realizando las trasnformaciones.
