@@ -47,7 +47,7 @@ elif page == "Cluster Prediction":
     
     # UI for data input
     total_spent = st.number_input('Total spent', min_value=0.0, format="%f")
-    purchase_frequency = st.number_input('Purchase frequency', min_value=0.0, format="%f")
+    purchase_frequency = st.number_input('Total purchases', min_value=0.0, format="%f")
     average_order_value = st.number_input('Average order value', min_value=0.0, format="%f")
     num_reviews = st.number_input('Number of reviews', min_value=0, format="%d")
     avg_review_score = st.number_input('Average review score', min_value=0.0, max_value=5.0, format="%f")
