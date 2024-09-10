@@ -9,7 +9,7 @@ COPY requirements.txt requirements.txt
 COPY app.py app.py
 
 # Copiar el archivo de credenciales de servicio
-COPY tfm-edem-4bb10bc4ec8e.json tfm-edem-4bb10bc4ec8e.json
+COPY tfm-edem-ec8bf5197ad5.json tfm-edem-ec8bf5197ad5.json
 
 # Instalar las dependencias de Python
 RUN pip install --no-cache-dir -r requirements.txt

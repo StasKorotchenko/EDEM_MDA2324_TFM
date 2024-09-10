@@ -5,8 +5,8 @@ from sklearn.cluster import KMeans
 import joblib
 
 # Configuración de Google Cloud
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "tfm-edem-4bb10bc4ec8e.json"
-
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "tfm-edem-ec8bf5197ad5.json"
+  
 # Cliente de BigQuery
 client = bigquery.Client()
 
@@ -60,7 +60,7 @@ client.query(update_query).result()  # Ejecutar la consulta de actualización
 client.delete_table(temp_table_id)
 
 # Guardar el modelo en un archivo pkl
-model_filename = 'kmeans_model.pkl'
+model_filename = 'clusterizacion_clientes_model.pkl'
 joblib.dump(kmeans, model_filename)
 
 # Subir el modelo al bucket de Google Cloud Storage
