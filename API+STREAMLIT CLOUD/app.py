@@ -163,9 +163,9 @@ elif page == "Demand Prediction":
                             styles = []
                             for value in row:
                                 if value == df['Predicted Demand'].max():
-                                    styles.append('background-color: #FFCCCB')  # Light red
+                                    styles.append('background-color: #CCFFCC')  # Light green
                                 elif value == df['Predicted Demand'].min():
-                                    styles.append('background-color: #E0FFFF')  # Light blue
+                                    styles.append('background-color: #FFCCCB')  # Light red
                                 else:
                                     styles.append('')
                             return styles

@@ -12,7 +12,7 @@ import io
 
 app = FastAPI()
 
-# Настройки GCP
+
 bucket_name = "bucket_for_model_tfm"
 kmeans_model_filename = "clusterizacion_clientes_model.pkl"
 scaler_filename = "clusterizacion_clientes_modelscaler.pkl"
@@ -23,11 +23,11 @@ dataset_id = "tabla_pred_clust"
 cluster_table_id = "pred_clust"
 demand_table_id = "demand_predictions"
 
-# Инициализация клиентов GCP
+
 bq_client = bigquery.Client()
 storage_client = storage.Client()
 
-# Функция для загрузки модели из GCP
+
 def load_model_from_gcp(model_filename, is_joblib=False):
     bucket = storage_client.bucket(bucket_name)
     blob = bucket.blob(model_filename)
@@ -41,19 +41,19 @@ def load_model_from_gcp(model_filename, is_joblib=False):
     print(f"Loaded model type: {type(model)}")
     return model
 
-# Загрузка моделей
+
 kmeans_model = load_model_from_gcp(kmeans_model_filename, is_joblib=False)
 scaler = load_model_from_gcp(scaler_filename, is_joblib=False)
 prophet_model = load_model_from_gcp(prophet_model_filename, is_joblib=True)
 
-# Функция для загрузки схемы таблицы из YAML файла
+
 def load_schema_from_yaml(yaml_file):
     with open(yaml_file, 'r') as file:
         schema_dict = yaml.safe_load(file)
     schema = [bigquery.SchemaField(col['name'], col['type']) for col in schema_dict]
     return schema
 
-# Функция для создания таблицы BigQuery, если она не существует
+
 def create_bq_table_if_not_exists(table_id, schema):
     dataset_ref = bq_client.dataset(dataset_id)
     table_ref = dataset_ref.table(table_id)
@@ -66,7 +66,7 @@ def create_bq_table_if_not_exists(table_id, schema):
         bq_client.create_table(table)
         print(f"Table {table_id} created.")
 
-# Загрузка схем таблиц
+
 cluster_schema_file = "cluster_schema.yaml"
 demand_schema_file = "demand_schema.yaml"
 cluster_schema = load_schema_from_yaml(cluster_schema_file)
@@ -74,7 +74,7 @@ demand_schema = load_schema_from_yaml(demand_schema_file)
 create_bq_table_if_not_exists(cluster_table_id, cluster_schema)
 create_bq_table_if_not_exists(demand_table_id, demand_schema)
 
-# Классы моделей данных
+
 class ClusterInputData(BaseModel):
     total_spent: float
     purchase_frequency: float
@@ -87,7 +87,7 @@ class DemandInputData(BaseModel):
     days: int
     start_date: str = Field(default=None, description="Дата начала предсказания в формате 'YYYY-MM-DD'")
 
-# Функция для сохранения данных в BigQuery
+
 def save_to_bigquery(data, prediction_result, table_id, schema_file):
     schema = load_schema_from_yaml(schema_file)
 
@@ -110,11 +110,11 @@ def save_to_bigquery(data, prediction_result, table_id, schema_file):
     if errors:
         print(f"Failed to insert rows into BigQuery: {errors}")
 
-# Эндпоинт для предсказания кластера
+
 @app.post("/predict")
 def predict(data: ClusterInputData):
     try:
-        # Подготовка данных для модели
+        
         input_df = pd.DataFrame([data.dict()])
         scaled_input_df = scaler.transform(input_df)
         prediction = kmeans_model.predict(scaled_input_df)[0]
@@ -124,43 +124,43 @@ def predict(data: ClusterInputData):
         elif isinstance(prediction, (np.floating, np.float32, np.float64)):
             prediction = float(prediction)
 
-        # Сохранение результата в BigQuery
+        
         save_to_bigquery(data.dict(), str(prediction), cluster_table_id, cluster_schema_file)
 
         return {"prediction": prediction}
     except Exception as e:
         raise HTTPException(status_code=400, detail=str(e))
 
-# Эндпоинт для предсказания спроса
+
 @app.post("/demand_predict")
 def demand_predict(data: DemandInputData):
     try:
         n_days = data.days
 
-        # Используем дату от пользователя или текущую дату, если не указана
+        
         if data.start_date:
             current_date = datetime.strptime(data.start_date, "%Y-%m-%d")
         else:
             current_date = datetime.utcnow()
 
-        # Создаем DataFrame для будущих предсказаний
+        
         future = prophet_model.make_future_dataframe(periods=n_days, freq='D', include_history=False)
         future['ds'] = pd.date_range(start=current_date, periods=n_days, freq='D')
 
         print(f"Future DataFrame before prediction: {future.head()}")
         print(f"Future DataFrame date range: {future['ds'].min()} - {future['ds'].max()}")
 
-        # Делаем предсказание
+        
         forecast = prophet_model.predict(future)
 
-        # Подготовка результата
+        
         results = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(n_days).to_dict(orient='records')
 
-        # Форматирование даты для сохранения в BigQuery
+        
         for result in results:
             result['ds'] = result['ds'].strftime('%Y-%m-%d %H:%M:%S')
 
-        # Сохранение предсказаний в BigQuery
+        
         for result in results:
             result_data = {
                 "ds": result['ds'],
